@@ -1,49 +1,69 @@
-function readdates() {  
-  
-  eventsJson = require("Storage").readJSON("personal.json", true);  
-  if(eventsJson == undefined){
-    g.drawString("Error", 50, 50);
-    return;
-  }      
-  // work out how to display the current time
-  // wvar d = new Date();
-  // wvar h = d.getHours(), m = d.getMinutes();
-  // wvar time = h + ":" + ("0"+m).substr(-2);
+function display_one_line_on_screen(oneDate, offset){
+  g.drawString(oneDate, 0, offset);
+}
+
+function make_to_digits_string(datepart){
+  datepartstring = datepart.toString();
+  if(datepartstring.length<=1){
+    return "0" + datepartstring;
+  }
+  else
+  {
+    return datepartstring;
+  }
+}
+
+function make_datetext(dateObj){
+    monthstring = make_to_digits_string(dateObj.getMonth()+1);
+    daystring = make_to_digits_string(dateObj.getDate());
+    return monthstring + "-" + daystring;
+}
+
+function display_dates() {
+    //read data from file
+    eventsJson = require("Storage").readJSON("personal.json", true);
+    if(eventsJson == undefined){
+      g.drawString("Error reading file", 50, 50);
+      return;
+    }
 
   // Reset the state of the graphics library
   g.reset();
   g.setFontAlign(-5,0); // center font
-  g.setFont("6x8",1); // bitmap font, 8x magnified
-  // Clear the area where we want to draw the time
-  //g.clearRect(50,50,100,120);
-  // draw the current time
+  g.setFont("6x8",2); // bitmap font, 2x magnified
   g.clear();
-  
+
+  //show Today
   now = new Date();
-  maxDate =  new Date(now.setDate(now.getDate() + 10));
+  g.drawString(make_datetext(now) + "Today", 0, 10);
   
-  eventEntriesCount = eventsJson.length;  
   
-  eventTextOffset = 40;
-  
-  for (var i=0; i<eventEntriesCount; i++) {
+  g.setFont("6x8",1.5); // bitmap font, 1.5x magnified
+  maxDate =  new Date(now.setDate(now.getDate() + 10));  //only show dates to this datetime
+  eventEntriesCount = eventsJson.length;
+
+  datesToShow = [];
+  for (var i=0; i<eventEntriesCount; i++) {    
     aDate = Date.parse(eventsJson[i].Date);     
-    if(aDate < maxDate){
-      
+    if(aDate < maxDate) {      
       aDateObj = new Date(aDate);
-      
-      datepart = (aDateObj.getDate()) + "." + (aDateObj.getMonth() + 1);
-      
-      g.drawString(datepart + " " + eventsJson[i].Event, 0, eventTextOffset);
-      
-      //g.drawString(g.wrapString(datepart + " " + eventsJson[i].Event, g.getWidth()).join("\n\t"),0,eventTextOffset);
-      
-      eventTextOffset += 20;
-    }
+      datepart = make_datetext(aDateObj);
+      datesToShow.push(datepart + " " + eventsJson[i].Event);
+    }    
   }
+  
+  datesToShow.sort();
+  
+  //show on display
+  eventTextOffset = 40;
+  for (i=0; i<datesToShow.length; i++) { 
+     display_one_line_on_screen(datesToShow[i], eventTextOffset);
+     eventTextOffset += 15;
+  }
+  
 }
 
 
 // draw immediately at first
-readdates();
+display_dates();
 //var secondInterval = setInterval(readdates, 1000);
