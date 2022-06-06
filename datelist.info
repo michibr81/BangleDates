@@ -1,0 +1,6 @@
+require("Storage").write("datelist.info",{
+  "id":"datelist",
+  "name":"List of Dates",
+  "src":"datelist.app.js",
+  "icon":"datelist.img"
+});
