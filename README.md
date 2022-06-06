@@ -28,3 +28,5 @@ To show dates in the watch, data from an .ics format file must be converted to j
 ## Showing Dates on Watch
 
 All found dates from **today + 10 days** are listed when starting the app. The current date is shown on top.
+
+Events which have a RRULE set to FREQ=YEARLY and have a startdate long ago are shown for the current year.
